@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
+  <div class="max-w-md w-full bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="p-8">
+      <h2 class="text-2xl font-bold text-gray-800 text-center mb-6">Create Account</h2>
+      
+      <form id="signupForm" class="space-y-4" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+      
+    <!-- Profile Picture Upload at Top -->
+<div class="flex flex-col items-center space-y-2 mb-4">
+  <div class="relative group w-32 h-32">
+    <img id="profilePicPreview" 
+        class="w-32 h-32 object-cover rounded-full border-solid border-4 border-blue-300 transition duration-300">
+        <label for="profilePic" class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 rounded-full group-hover:bg-opacity-40 cursor-pointer transition duration-300">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white opacity-0 group-hover:opacity-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+          </svg>
+        </label>  
+
+        <button id="removePicBtn" onclick="removeProfilePic()" 
+                class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hidden">
+          ×
+        </button>
+    </div>
+ <input type="file" name="profile_picture" id="profilePic" accept="image/*" class="hidden" onchange="previewProfilePic(event)">
+  <span class="text-sm text-gray-500">Click to upload</span>
+</div>
+        
+
+
+
+    <div class="grid grid-cols-2 gap-4">
+        <!-- Patient Option -->
+        <label class="relative cursor-pointer group">
+          <input type="radio" name="userType" value="patient" class="sr-only peer" checked>
+          <div class="flex items-center justify-center w-full h-full p-4 rounded-xl bg-white shadow-md transition-all duration-300  group-hover:shadow-lg peer-checked:ring-2 peer-checked:ring-blue-500 peer-checked:bg-blue-50 peer-checked:shadow-blue-200">
+            <span class="text-lg font-medium text-gray-700 peer-checked:text-blue-600 peer-checked:font-semibold">👤 Patient</span>
+          </div>
+        </label>
+
+  <!-- Doctor Option -->
+            <label class="relative cursor-pointer group">
+            <input type="radio" name="userType" value="doctor" class="sr-only peer">
+            <div class="flex items-center justify-center w-full h-full p-4 rounded-xl bg-white shadow-md transition-all duration-300 group-hover:shadow-lg peer-checked:ring-2 peer-checked:ring-blue-500 peer-checked:bg-blue-50 peer-checked:shadow-blue-200">
+              <span class="text-lg font-medium text-gray-700 peer-checked:text-blue-600 peer-checked:font-semibold">🩺 Doctor</span>
+            </div>
+          </label>
+      </div>
+
+        <!-- Name -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <input type="text" name="firstName" placeholder="First Name" class="w-full p-2 border rounded" required>
+          </div>
+          <div>
+            <input type="text" name="lastName" placeholder="Last Name" class="w-full p-2 border rounded" required>
+          </div>
+        </div>
+        <div>
+        <input type="username" name="username" placeholder="Username" class="w-full p-2 border rounded" required>
+      </div>
+
+        <!-- Email -->
+        <div>
+          <input type="email" name="email" placeholder="Email" class="w-full p-2 border rounded" required>
+        </div>
+
+        <!-- Password -->
+        <div>
+          <input type="password" name="password" placeholder="Password" class="w-full p-2 border rounded" required>
+        </div>
+        <div>
+          <input type="password" name="confirmPassword" placeholder="Confirm Password" class="w-full p-2 border rounded" required>
+        </div>
+
+        <!-- address -->
+         <div>
+        <input type="text" name="streetAddress" placeholder="Street Address" class="w-full p-2 border rounded" required>
+        </div>
+
+        <div class="grid grid-cols-2 grid-rows-2 gap-4">
+          <div>
+            <input type="text" name="city" placeholder="City" class="w-full p-2 border rounded" required>
+          </div>
+          <div>
+            <input type="text" name="state" placeholder="State" class="w-full p-2 border rounded" required>
+          </div>
+          <div>
+            <input type="text" name="pincode" placeholder="Pincode" class="w-full p-2 border rounded" required>
+          </div>
+          <div>
+            <input type="text" name="country" placeholder="Country" class="w-full p-2 border rounded" required>
+          </div>
+        </div>
+
+
+
+        <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
+          Sign Up
+        </button>
+      </form>
+
+        <!-- Submit -->
+      <div class="mt-4 text-center text-sm">
+        Already have an account? 
+        <a href="/login" class="text-blue-600">Log in</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+document.getElementById('signupForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  if (this.elements.password.value !== this.elements.confirmPassword.value) {
+    alert('Passwords do not match');
+    return;
+  }
+  this.submit();
+});
+
+
+  function previewProfilePic(event) {
+    const input = event.target;
+    const preview = document.getElementById("profilePicPreview");
+    const removeBtn = document.getElementById("removePicBtn");
+
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        preview.src = e.target.result;
+        removeBtn.classList.remove("hidden");
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  function removeProfilePic() {
+    const input = document.getElementById("profilePic");
+    const preview = document.getElementById("profilePicPreview");
+    const removeBtn = document.getElementById("removePicBtn");
+
+    input.value = "";  // clear file input
+    preview.src = "https://via.placeholder.com/96x96.png?text=+";
+    removeBtn.classList.add("hidden");
+  }
+</script>
+
+{% endblock %}
